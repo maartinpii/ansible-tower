@@ -1,0 +1,31 @@
+---
+- hosts: all
+  sudo: yes
+
+  tasks:
+
+    - name: install packages
+      apt: name={{ item }} update_cache=yes state=latest
+      with_items:
+        - python
+        - git
+        - python-pip
+
+    - name: install pip packages
+      pip: name={{ item }}
+      with_items:
+        - flask
+        - werkzeug
+        - supervisor
+
+    - name: clone app repo
+      git: repo=https://github.com/maartinpii/another-flask-example.git dest=/tmp/flask-example update=no
+
+    - name: configure supervisor
+      template: src=myapp.conf dest=/etc/supervisor/conf.d/myapp.conf
+      notify:
+        - restart supervisor
+
+  handlers:
+    - name: restart supervisor
+      service: name=supervisor state=restarted
