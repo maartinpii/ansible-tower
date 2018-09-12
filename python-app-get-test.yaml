@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+
+  tasks:
+
+    - name: check that GET method works ok!
+      uri:
+        url: http://35.198.4.192:5000/customers
+        return_content: yes
+      register: webpage
